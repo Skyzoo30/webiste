@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Star, TrendingUp, TrendingDown, AlertCircle, Loader2 } from 'lucide-react'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { Star, TrendingUp, TrendingDown, AlertCircle, Loader2, Menu, X } from 'lucide-react'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import axios from 'axios'
 
 interface Pair {
@@ -100,6 +100,7 @@ export default function App() {
   const [loadingFearGreed, setLoadingFearGreed] = useState(false)
   const [news, setNews] = useState<NewsItem[]>([])
   const [loadingNews, setLoadingNews] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // Fetch Fear & Greed Index
   useEffect(() => {
@@ -140,7 +141,6 @@ export default function App() {
         setNews(newsItems)
       } catch (error) {
         console.error('Error fetching news:', error)
-        // Fallback news
         setNews([
           {
             id: 'mock-1',
@@ -220,36 +220,45 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-slate-950">
       {/* Header */}
-      <div className="border-b border-slate-700 bg-slate-900/50 backdrop-blur">
-        <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="border-b border-slate-700 bg-slate-900 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-white">Trading Terminal</h1>
-              <p className="text-slate-400 text-sm mt-1">Forex • Crypto • CFD Live Data</p>
+            <div className="flex-1">
+              <h1 className="text-2xl md:text-3xl font-bold text-white">Trading Terminal</h1>
+              <p className="text-slate-400 text-xs md:text-sm">Forex • Crypto • CFD</p>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-amber-400">{selectedPair?.price.toFixed(2)}</div>
-              <div className={`text-sm font-semibold ${selectedPair && selectedPair.changePercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+            <div className="text-right mr-4">
+              <div className="text-xl md:text-2xl font-bold text-amber-400">${selectedPair?.price.toFixed(2)}</div>
+              <div className={`text-xs md:text-sm font-semibold ${selectedPair && selectedPair.changePercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                 {selectedPair && selectedPair.changePercent >= 0 ? '+' : ''}{selectedPair?.changePercent.toFixed(2)}%
               </div>
             </div>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden text-white p-2"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Sidebar - Watchlist */}
-          <div className="lg:col-span-1">
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 sticky top-8">
+          <div className={`${mobileMenuOpen ? 'block' : 'hidden'} md:block md:col-span-1`}>
+            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 sticky top-24">
               <h2 className="text-lg font-semibold text-white mb-4">Watchlist</h2>
-              <div className="space-y-2">
+              <div className="space-y-2 max-h-96 overflow-y-auto">
                 {pairs.map((pair) => (
                   <button
                     key={pair.id}
-                    onClick={() => setSelectedPair(pair)}
+                    onClick={() => {
+                      setSelectedPair(pair)
+                      setMobileMenuOpen(false)
+                    }}
                     className={`w-full text-left p-3 rounded-lg transition-all ${
                       selectedPair?.id === pair.id
                         ? 'bg-amber-500/20 border border-amber-500/50'
@@ -257,7 +266,7 @@ export default function App() {
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <div>
+                      <div className="flex-1">
                         <div className="font-semibold text-white text-sm">{pair.symbol}</div>
                         <div className="text-xs text-slate-400">{pair.name}</div>
                       </div>
@@ -266,9 +275,9 @@ export default function App() {
                           e.stopPropagation()
                           toggleFavorite(pair.id)
                         }}
-                        className="text-amber-400 hover:scale-110 transition"
+                        className="text-amber-400 hover:scale-110 transition ml-2"
                       >
-                        <Star size={16} fill={favorites.has(pair.id) ? 'currentColor' : 'none'} />
+                        <Star size={14} fill={favorites.has(pair.id) ? 'currentColor' : 'none'} />
                       </button>
                     </div>
                     <div className="flex items-center justify-between mt-2">
@@ -285,70 +294,78 @@ export default function App() {
           </div>
 
           {/* Main Content */}
-          <div className="lg:col-span-3 space-y-6">
+          <div className="col-span-1 md:col-span-3 space-y-6">
             {/* Chart */}
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
-              <h3 className="text-white font-semibold mb-4">Price Chart</h3>
-              <div className="h-96">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chartData}>
-                    <defs>
-                      <linearGradient id="colorClose" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                    <XAxis dataKey="time" stroke="#94a3b8" />
-                    <YAxis stroke="#94a3b8" />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }}
-                      labelStyle={{ color: '#f1f5f9' }}
-                    />
-                    <Area type="monotone" dataKey="close" stroke="#f59e0b" fillOpacity={1} fill="url(#colorClose)" />
-                  </AreaChart>
-                </ResponsiveContainer>
+            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 md:p-6">
+              <h3 className="text-white font-semibold mb-4 text-sm md:text-base">Price Chart</h3>
+              <div className="h-64 md:h-96 w-full">
+                {chartData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                      <XAxis dataKey="time" stroke="#94a3b8" tick={{ fontSize: 12 }} />
+                      <YAxis stroke="#94a3b8" tick={{ fontSize: 12 }} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
+                        labelStyle={{ color: '#f1f5f9' }}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="close"
+                        stroke="#f59e0b"
+                        strokeWidth={2}
+                        dot={false}
+                        isAnimationActive={false}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="flex items-center justify-center h-full text-slate-400">
+                    <Loader2 className="animate-spin mr-2" size={20} />
+                    Loading chart...
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Info Panels */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Market Info */}
-              <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+              <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 md:p-6">
                 <h3 className="text-white font-semibold mb-4 text-sm">Market Info</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 text-sm">24h High</span>
-                    <span className="text-white font-semibold">${selectedPair?.high24h.toFixed(2)}</span>
+                    <span className="text-slate-400 text-xs md:text-sm">24h High</span>
+                    <span className="text-white font-semibold text-sm md:text-base">${selectedPair?.high24h.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 text-sm">24h Low</span>
-                    <span className="text-white font-semibold">${selectedPair?.low24h.toFixed(2)}</span>
+                    <span className="text-slate-400 text-xs md:text-sm">24h Low</span>
+                    <span className="text-white font-semibold text-sm md:text-base">${selectedPair?.low24h.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 text-sm">24h Volume</span>
-                    <span className="text-white font-semibold">${((selectedPair?.volume || 0) / 1e9).toFixed(1)}B</span>
+                    <span className="text-slate-400 text-xs md:text-sm">24h Volume</span>
+                    <span className="text-white font-semibold text-sm md:text-base">${((selectedPair?.volume || 0) / 1e9).toFixed(1)}B</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-slate-700">
-                    <span className="text-slate-400 text-sm">Type</span>
-                    <span className="text-amber-400 font-semibold capitalize">{selectedPair?.type}</span>
+                    <span className="text-slate-400 text-xs md:text-sm">Type</span>
+                    <span className="text-amber-400 font-semibold capitalize text-sm">{selectedPair?.type}</span>
                   </div>
                 </div>
               </div>
 
               {/* Fear & Greed Index */}
-              <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+              <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 md:p-6">
                 <h3 className="text-white font-semibold mb-4 text-sm">Fear & Greed Index</h3>
                 <div className="flex flex-col items-center justify-center py-6">
                   {loadingFearGreed ? (
                     <div className="flex items-center gap-2 text-slate-400">
                       <Loader2 className="animate-spin" size={16} />
-                      Loading...
+                      <span className="text-xs md:text-sm">Loading...</span>
                     </div>
                   ) : (
                     <>
-                      <div className={`text-5xl font-bold ${getFearGreedColor(fearGreedIndex)} mb-2`}>{fearGreedIndex}</div>
-                      <div className={`text-lg font-semibold ${getFearGreedColor(fearGreedIndex)}`}>{getFearGreedLabel(fearGreedIndex)}</div>
+                      <div className={`text-4xl md:text-5xl font-bold ${getFearGreedColor(fearGreedIndex)} mb-2`}>{fearGreedIndex}</div>
+                      <div className={`text-base md:text-lg font-semibold ${getFearGreedColor(fearGreedIndex)}`}>{getFearGreedLabel(fearGreedIndex)}</div>
                       <div className="w-full bg-slate-700 rounded-full h-2 mt-4">
                         <div
                           className="bg-gradient-to-r from-red-600 via-yellow-500 to-green-600 h-2 rounded-full transition-all"
@@ -362,27 +379,27 @@ export default function App() {
             </div>
 
             {/* News Feed */}
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 md:p-6">
               <h3 className="text-white font-semibold mb-4 text-sm">Market News</h3>
               <div className="space-y-3">
                 {loadingNews ? (
                   <div className="flex items-center justify-center py-8 text-slate-400">
                     <Loader2 className="animate-spin mr-2" size={16} />
-                    Loading news...
+                    <span className="text-xs md:text-sm">Loading news...</span>
                   </div>
                 ) : news.length > 0 ? (
                   news.map((item, idx) => (
                     <div key={item.id} className={`flex gap-3 ${idx < news.length - 1 ? 'pb-3 border-b border-slate-700' : ''}`}>
                       <AlertCircle className="text-amber-400 flex-shrink-0 mt-1" size={16} />
-                      <div>
-                        <div className="font-semibold text-white text-sm line-clamp-2">{item.title}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-white text-xs md:text-sm line-clamp-2">{item.title}</div>
                         <div className="text-slate-400 text-xs mt-1 line-clamp-2">{item.description}</div>
                         <div className="text-slate-500 text-xs mt-1">{item.source}</div>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="text-slate-400 text-sm text-center py-4">No news available</div>
+                  <div className="text-slate-400 text-xs md:text-sm text-center py-4">No news available</div>
                 )}
               </div>
             </div>
