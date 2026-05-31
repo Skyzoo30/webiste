@@ -204,11 +204,11 @@ export default function App() {
   }
 
   const getFearGreedColor = (value: number) => {
-    if (value < 25) return 'text-red-600'
-    if (value < 45) return 'text-orange-600'
-    if (value < 55) return 'text-yellow-600'
-    if (value < 75) return 'text-green-600'
-    return 'text-green-700'
+    if (value < 25) return '#dc2626'
+    if (value < 45) return '#ea580c'
+    if (value < 55) return '#eab308'
+    if (value < 75) return '#22c55e'
+    return '#16a34a'
   }
 
   const getFearGreedLabel = (value: number) => {
@@ -219,189 +219,347 @@ export default function App() {
     return 'Extreme Greed'
   }
 
+  const styles = {
+    container: {
+      minHeight: '100vh',
+      backgroundColor: '#030712',
+      display: 'flex',
+      flexDirection: 'column' as const,
+    },
+    header: {
+      borderBottom: '1px solid #334155',
+      backgroundColor: '#0f172a',
+      position: 'sticky' as const,
+      top: 0,
+      zIndex: 50,
+      padding: '1rem',
+    },
+    headerContent: {
+      maxWidth: '1280px',
+      margin: '0 auto',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      width: '100%',
+    },
+    headerTitle: {
+      fontSize: '1.875rem',
+      fontWeight: 'bold',
+      color: '#f1f5f9',
+      marginBottom: '0.25rem',
+    },
+    headerSubtitle: {
+      color: '#cbd5e1',
+      fontSize: '0.875rem',
+    },
+    headerPrice: {
+      fontSize: '1.5rem',
+      fontWeight: 'bold',
+      color: '#fbbf24',
+      textAlign: 'right' as const,
+    },
+    headerChange: {
+      fontSize: '0.875rem',
+      fontWeight: '600',
+    },
+    mainContent: {
+      maxWidth: '1280px',
+      margin: '0 auto',
+      padding: '1.5rem',
+      width: '100%',
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+      gap: '1.5rem',
+    },
+    card: {
+      backgroundColor: '#1e293b',
+      border: '1px solid #334155',
+      borderRadius: '0.5rem',
+      padding: '1.5rem',
+    },
+    cardTitle: {
+      fontSize: '1.125rem',
+      fontWeight: '600',
+      color: '#f1f5f9',
+      marginBottom: '1rem',
+    },
+    watchlistItem: {
+      padding: '0.75rem',
+      borderRadius: '0.5rem',
+      marginBottom: '0.5rem',
+      cursor: 'pointer',
+      border: '1px solid #475569',
+      backgroundColor: '#334155',
+      transition: 'all 0.2s',
+    },
+    watchlistItemActive: {
+      backgroundColor: 'rgba(251, 191, 36, 0.2)',
+      borderColor: 'rgba(251, 191, 36, 0.5)',
+    },
+    chartContainer: {
+      height: '400px',
+      width: '100%',
+      gridColumn: 'span 2',
+    },
+    infoGrid: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: '1rem',
+      marginTop: '1rem',
+    },
+    infoRow: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingBottom: '0.75rem',
+      borderBottom: '1px solid #334155',
+    },
+    infoLabel: {
+      color: '#cbd5e1',
+      fontSize: '0.875rem',
+    },
+    infoValue: {
+      color: '#f1f5f9',
+      fontWeight: '600',
+    },
+    newsItem: {
+      paddingBottom: '0.75rem',
+      borderBottom: '1px solid #334155',
+      marginBottom: '0.75rem',
+    },
+    newsTitle: {
+      fontWeight: '600',
+      color: '#f1f5f9',
+      fontSize: '0.875rem',
+      marginBottom: '0.25rem',
+    },
+    newsDesc: {
+      color: '#cbd5e1',
+      fontSize: '0.75rem',
+      marginBottom: '0.25rem',
+    },
+    newsSource: {
+      color: '#94a3b8',
+      fontSize: '0.75rem',
+    },
+  }
+
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div style={styles.container}>
       {/* Header */}
-      <div className="border-b border-slate-700 bg-slate-900 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <h1 className="text-2xl md:text-3xl font-bold text-white">Trading Terminal</h1>
-              <p className="text-slate-400 text-xs md:text-sm">Forex • Crypto • CFD</p>
-            </div>
-            <div className="text-right mr-4">
-              <div className="text-xl md:text-2xl font-bold text-amber-400">${selectedPair?.price.toFixed(2)}</div>
-              <div className={`text-xs md:text-sm font-semibold ${selectedPair && selectedPair.changePercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {selectedPair && selectedPair.changePercent >= 0 ? '+' : ''}{selectedPair?.changePercent.toFixed(2)}%
-              </div>
-            </div>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden text-white p-2"
-            >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+      <div style={styles.header}>
+        <div style={styles.headerContent}>
+          <div style={{ flex: 1 }}>
+            <div style={styles.headerTitle}>Trading Terminal</div>
+            <div style={styles.headerSubtitle}>Forex • Crypto • CFD Live Data</div>
           </div>
+          <div style={{ textAlign: 'right', marginRight: '1rem' }}>
+            <div style={styles.headerPrice}>${selectedPair?.price.toFixed(2)}</div>
+            <div style={{
+              ...styles.headerChange,
+              color: selectedPair && selectedPair.changePercent >= 0 ? '#4ade80' : '#f87171'
+            }}>
+              {selectedPair && selectedPair.changePercent >= 0 ? '+' : ''}{selectedPair?.changePercent.toFixed(2)}%
+            </div>
+          </div>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#f1f5f9',
+              cursor: 'pointer',
+              padding: '0.5rem',
+              display: 'none',
+            }}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {/* Sidebar - Watchlist */}
-          <div className={`${mobileMenuOpen ? 'block' : 'hidden'} md:block md:col-span-1`}>
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 sticky top-24">
-              <h2 className="text-lg font-semibold text-white mb-4">Watchlist</h2>
-              <div className="space-y-2 max-h-96 overflow-y-auto">
+      {/* Main Content */}
+      <div style={{ flex: 1, overflow: 'auto' }}>
+        <div style={styles.mainContent}>
+          {/* Watchlist Sidebar */}
+          <div style={{ gridColumn: 'span 1', minWidth: '280px' }}>
+            <div style={styles.card}>
+              <div style={styles.cardTitle}>Watchlist</div>
+              <div style={{ maxHeight: '600px', overflowY: 'auto' }}>
                 {pairs.map((pair) => (
-                  <button
+                  <div
                     key={pair.id}
-                    onClick={() => {
-                      setSelectedPair(pair)
-                      setMobileMenuOpen(false)
+                    onClick={() => setSelectedPair(pair)}
+                    style={{
+                      ...styles.watchlistItem,
+                      ...(selectedPair?.id === pair.id ? styles.watchlistItemActive : {}),
                     }}
-                    className={`w-full text-left p-3 rounded-lg transition-all ${
-                      selectedPair?.id === pair.id
-                        ? 'bg-amber-500/20 border border-amber-500/50'
-                        : 'bg-slate-700/50 border border-slate-600 hover:bg-slate-700'
-                    }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="font-semibold text-white text-sm">{pair.symbol}</div>
-                        <div className="text-xs text-slate-400">{pair.name}</div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                      <div>
+                        <div style={{ fontWeight: '600', color: '#f1f5f9', fontSize: '0.875rem' }}>{pair.symbol}</div>
+                        <div style={{ color: '#cbd5e1', fontSize: '0.75rem' }}>{pair.name}</div>
                       </div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
                           toggleFavorite(pair.id)
                         }}
-                        className="text-amber-400 hover:scale-110 transition ml-2"
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#fbbf24',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem',
+                        }}
                       >
-                        <Star size={14} fill={favorites.has(pair.id) ? 'currentColor' : 'none'} />
+                        {favorites.has(pair.id) ? '★' : '☆'}
                       </button>
                     </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <div className="text-sm font-bold text-white">${pair.price.toFixed(pair.type === 'forex' ? 4 : 2)}</div>
-                      <div className={`text-xs font-semibold flex items-center gap-1 ${pair.changePercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                        {pair.changePercent >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                        {pair.changePercent.toFixed(2)}%
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ fontWeight: 'bold', color: '#f1f5f9', fontSize: '0.875rem' }}>
+                        ${pair.price.toFixed(pair.type === 'forex' ? 4 : 2)}
+                      </div>
+                      <div style={{
+                        fontSize: '0.75rem',
+                        fontWeight: '600',
+                        color: pair.changePercent >= 0 ? '#4ade80' : '#f87171',
+                      }}>
+                        {pair.changePercent >= 0 ? '↑' : '↓'} {pair.changePercent.toFixed(2)}%
                       </div>
                     </div>
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Main Content */}
-          <div className="col-span-1 md:col-span-3 space-y-6">
-            {/* Chart */}
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 md:p-6">
-              <h3 className="text-white font-semibold mb-4 text-sm md:text-base">Price Chart</h3>
-              <div className="h-64 md:h-96 w-full">
-                {chartData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                      <XAxis dataKey="time" stroke="#94a3b8" tick={{ fontSize: 12 }} />
-                      <YAxis stroke="#94a3b8" tick={{ fontSize: 12 }} />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
-                        labelStyle={{ color: '#f1f5f9' }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="close"
-                        stroke="#f59e0b"
-                        strokeWidth={2}
-                        dot={false}
-                        isAnimationActive={false}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <div className="flex items-center justify-center h-full text-slate-400">
-                    <Loader2 className="animate-spin mr-2" size={20} />
-                    Loading chart...
-                  </div>
-                )}
+          {/* Chart */}
+          <div style={{ ...styles.card, gridColumn: 'span 2' }}>
+            <div style={styles.cardTitle}>Price Chart - {selectedPair?.symbol}</div>
+            <div style={styles.chartContainer}>
+              {chartData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                    <XAxis dataKey="time" stroke="#94a3b8" tick={{ fontSize: 12 }} />
+                    <YAxis stroke="#94a3b8" tick={{ fontSize: 12 }} />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
+                      labelStyle={{ color: '#f1f5f9' }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="close"
+                      stroke="#fbbf24"
+                      strokeWidth={2}
+                      dot={false}
+                      isAnimationActive={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#cbd5e1' }}>
+                  <Loader2 style={{ animation: 'spin 1s linear infinite', marginRight: '0.5rem' }} size={20} />
+                  Loading chart...
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Market Info */}
+          <div style={styles.card}>
+            <div style={styles.cardTitle}>Market Info</div>
+            <div>
+              <div style={styles.infoRow}>
+                <span style={styles.infoLabel}>24h High</span>
+                <span style={styles.infoValue}>${selectedPair?.high24h.toFixed(2)}</span>
+              </div>
+              <div style={styles.infoRow}>
+                <span style={styles.infoLabel}>24h Low</span>
+                <span style={styles.infoValue}>${selectedPair?.low24h.toFixed(2)}</span>
+              </div>
+              <div style={styles.infoRow}>
+                <span style={styles.infoLabel}>24h Volume</span>
+                <span style={styles.infoValue}>${((selectedPair?.volume || 0) / 1e9).toFixed(1)}B</span>
+              </div>
+              <div style={{ ...styles.infoRow, borderBottom: 'none' }}>
+                <span style={styles.infoLabel}>Type</span>
+                <span style={{ ...styles.infoValue, color: '#fbbf24', textTransform: 'capitalize' }}>
+                  {selectedPair?.type}
+                </span>
               </div>
             </div>
+          </div>
 
-            {/* Info Panels */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Market Info */}
-              <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 md:p-6">
-                <h3 className="text-white font-semibold mb-4 text-sm">Market Info</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-400 text-xs md:text-sm">24h High</span>
-                    <span className="text-white font-semibold text-sm md:text-base">${selectedPair?.high24h.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-400 text-xs md:text-sm">24h Low</span>
-                    <span className="text-white font-semibold text-sm md:text-base">${selectedPair?.low24h.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-400 text-xs md:text-sm">24h Volume</span>
-                    <span className="text-white font-semibold text-sm md:text-base">${((selectedPair?.volume || 0) / 1e9).toFixed(1)}B</span>
-                  </div>
-                  <div className="flex justify-between items-center pt-2 border-t border-slate-700">
-                    <span className="text-slate-400 text-xs md:text-sm">Type</span>
-                    <span className="text-amber-400 font-semibold capitalize text-sm">{selectedPair?.type}</span>
-                  </div>
+          {/* Fear & Greed Index */}
+          <div style={styles.card}>
+            <div style={styles.cardTitle}>Fear & Greed Index</div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 0' }}>
+              {loadingFearGreed ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#cbd5e1' }}>
+                  <Loader2 style={{ animation: 'spin 1s linear infinite' }} size={16} />
+                  Loading...
                 </div>
-              </div>
-
-              {/* Fear & Greed Index */}
-              <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 md:p-6">
-                <h3 className="text-white font-semibold mb-4 text-sm">Fear & Greed Index</h3>
-                <div className="flex flex-col items-center justify-center py-6">
-                  {loadingFearGreed ? (
-                    <div className="flex items-center gap-2 text-slate-400">
-                      <Loader2 className="animate-spin" size={16} />
-                      <span className="text-xs md:text-sm">Loading...</span>
-                    </div>
-                  ) : (
-                    <>
-                      <div className={`text-4xl md:text-5xl font-bold ${getFearGreedColor(fearGreedIndex)} mb-2`}>{fearGreedIndex}</div>
-                      <div className={`text-base md:text-lg font-semibold ${getFearGreedColor(fearGreedIndex)}`}>{getFearGreedLabel(fearGreedIndex)}</div>
-                      <div className="w-full bg-slate-700 rounded-full h-2 mt-4">
-                        <div
-                          className="bg-gradient-to-r from-red-600 via-yellow-500 to-green-600 h-2 rounded-full transition-all"
-                          style={{ width: `${fearGreedIndex}%` }}
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
+              ) : (
+                <>
+                  <div style={{
+                    fontSize: '3rem',
+                    fontWeight: 'bold',
+                    color: getFearGreedColor(fearGreedIndex),
+                    marginBottom: '0.5rem',
+                  }}>
+                    {fearGreedIndex}
+                  </div>
+                  <div style={{
+                    fontSize: '1.125rem',
+                    fontWeight: '600',
+                    color: getFearGreedColor(fearGreedIndex),
+                    marginBottom: '1rem',
+                  }}>
+                    {getFearGreedLabel(fearGreedIndex)}
+                  </div>
+                  <div style={{
+                    width: '100%',
+                    backgroundColor: '#334155',
+                    borderRadius: '9999px',
+                    height: '8px',
+                    overflow: 'hidden',
+                  }}>
+                    <div
+                      style={{
+                        height: '100%',
+                        width: `${fearGreedIndex}%`,
+                        background: 'linear-gradient(to right, #dc2626, #eab308, #22c55e)',
+                        transition: 'width 0.3s ease',
+                      }}
+                    />
+                  </div>
+                </>
+              )}
             </div>
+          </div>
 
-            {/* News Feed */}
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 md:p-6">
-              <h3 className="text-white font-semibold mb-4 text-sm">Market News</h3>
-              <div className="space-y-3">
-                {loadingNews ? (
-                  <div className="flex items-center justify-center py-8 text-slate-400">
-                    <Loader2 className="animate-spin mr-2" size={16} />
-                    <span className="text-xs md:text-sm">Loading news...</span>
+          {/* News Feed */}
+          <div style={{ ...styles.card, gridColumn: 'span 3' }}>
+            <div style={styles.cardTitle}>Market News</div>
+            <div>
+              {loadingNews ? (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', color: '#cbd5e1' }}>
+                  <Loader2 style={{ animation: 'spin 1s linear infinite', marginRight: '0.5rem' }} size={16} />
+                  Loading news...
+                </div>
+              ) : news.length > 0 ? (
+                news.map((item, idx) => (
+                  <div key={item.id} style={{ ...styles.newsItem, borderBottom: idx < news.length - 1 ? '1px solid #334155' : 'none' }}>
+                    <div style={styles.newsTitle}>{item.title}</div>
+                    <div style={styles.newsDesc}>{item.description}</div>
+                    <div style={styles.newsSource}>{item.source}</div>
                   </div>
-                ) : news.length > 0 ? (
-                  news.map((item, idx) => (
-                    <div key={item.id} className={`flex gap-3 ${idx < news.length - 1 ? 'pb-3 border-b border-slate-700' : ''}`}>
-                      <AlertCircle className="text-amber-400 flex-shrink-0 mt-1" size={16} />
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-white text-xs md:text-sm line-clamp-2">{item.title}</div>
-                        <div className="text-slate-400 text-xs mt-1 line-clamp-2">{item.description}</div>
-                        <div className="text-slate-500 text-xs mt-1">{item.source}</div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-slate-400 text-xs md:text-sm text-center py-4">No news available</div>
-                )}
-              </div>
+                ))
+              ) : (
+                <div style={{ textAlign: 'center', color: '#cbd5e1', padding: '1rem' }}>No news available</div>
+              )}
             </div>
           </div>
         </div>
